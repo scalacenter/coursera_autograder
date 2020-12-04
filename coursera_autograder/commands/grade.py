@@ -51,6 +51,7 @@ def run_container(docker, container, args):
     try:
         exit_code = docker.wait(container, timeout=args.timeout)
         get_feedback(docker, container, "feedback.json", args.dst_dir)
+        get_feedback(docker, container, "txtFeedback.txt", args.dst_dir)
     except ReadTimeout:
         logging.error("The grader did not complete within the required "
                       "timeout of %s seconds.", args.timeout)
