@@ -45,13 +45,31 @@ def get_feedback(docker, container, file_name, dst_dir):
         f.write(t.extractfile(file_name).read())
 
 
+def capture_exceptions(*blocks):
+    failures = []
+    for f in blocks:
+        try:
+            f()
+        except Exception as e:
+            failures.append(e)
+    return failures
+
+
 def run_container(docker, container, args):
     "Runs the prepared container (and therefore grader), checking the output"
     docker.start(container)
     try:
         exit_code = docker.wait(container, timeout=args.timeout)
         get_feedback(docker, container, "feedback.json", args.dst_dir)
-        get_feedback(docker, container, "txtFeedback.txt", args.dst_dir)
+
+        failures = capture_exceptions(
+            lambda: get_feedback(docker, container, "txtFeedback.txt", args.dst_dir)
+            lambda: get_feedback(docker, container, "htmlFeedback.html", args.dst_dir)
+        )
+       if len(failures) == 2:
+            raise failures[0]
+        elif len(failures) == 0:
+            raise Exception("Grader should produce either txt or html feedback, not both")
     except ReadTimeout:
         logging.error("The grader did not complete within the required "
                       "timeout of %s seconds.", args.timeout)
