@@ -63,7 +63,7 @@ def run_container(docker, container, args):
         get_feedback(docker, container, "feedback.json", args.dst_dir)
 
         failures = capture_exceptions(
-            lambda: get_feedback(docker, container, "txtFeedback.txt", args.dst_dir)
+            lambda: get_feedback(docker, container, "txtFeedback.txt", args.dst_dir),
             lambda: get_feedback(docker, container, "htmlFeedback.html", args.dst_dir)
         )
        if len(failures) == 2:
