@@ -66,7 +66,7 @@ def run_container(docker, container, args):
             lambda: get_feedback(docker, container, "txtFeedback.txt", args.dst_dir),
             lambda: get_feedback(docker, container, "htmlFeedback.html", args.dst_dir)
         )
-       if len(failures) == 2:
+        if len(failures) == 2:
             raise failures[0]
         elif len(failures) == 0:
             raise Exception("Grader should produce either txt or html feedback, not both")
